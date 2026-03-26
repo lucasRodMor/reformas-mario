@@ -27,7 +27,6 @@ export default function App() {
   const { scrollYProgress } = useScroll();
 
   const videoRef = useRef<HTMLVideoElement>(null); // Ref for scroll video
-  const hallVideoRef = useRef<HTMLVideoElement>(null); // Ref for hall video
 
   const [testimonialIndex, setTestimonialIndex] = useState(0);
   const testimonials = [
@@ -42,7 +41,6 @@ export default function App() {
   const prevTestimonial = () => setTestimonialIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
   
   // Video scroll effects
-  const videoOpacity = useTransform(scrollYProgress, [0, 0.3], [1, 0.5]);
   const heroOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
   const heroScale = useTransform(scrollYProgress, [0, 0.2], [1, 0.95]);
 
@@ -67,15 +65,14 @@ export default function App() {
   return (
     <div ref={containerRef} className="relative w-full">
       {/* Background Video */}
-      <motion.div 
-        style={{ opacity: videoOpacity }}
-        className="video-container"
+      <motion.div
+        className="video-container fixed top-0 left-0 w-full h-screen"
       >
-        <video 
-          autoPlay 
-          muted 
-          loop 
+        <video
+          ref={videoRef}
+          muted
           playsInline
+          preload="auto"
           className="w-full h-full object-cover"
         >
           <source src="/assets/Smooth_and_striking_202603211905.mp4" type="video/mp4" />
@@ -174,25 +171,6 @@ export default function App() {
           </div>
         </section>
 
-        {/* Video Scroll Controlado: Hueco_frame */}
-        <section className="relative w-full h-[50vh] overflow-hidden">
-          <video
-            ref={videoRef}
-            muted
-            playsInline
-            preload="auto" // Preload for smoother experience
-            className="absolute top-0 left-0 w-full h-full object-cover"
-          >
-            <source src="/assets/Smooth_and_striking_202603211905.mp4" type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-          {/* Overlay to ensure content contrast */}
-          <div className="absolute inset-0 bg-black/30 z-10 flex items-center justify-center">
-            <h2 className="text-bone text-4xl md:text-6xl font-black uppercase tracking-tighter text-center max-w-4xl leading-tight">
-              Diseño y Ejecución que <span className="italic font-light text-accent">Superan Expectativas</span>
-            </h2>
-          </div>
-        </section>
 
         {/* Galería Proyectos (Bento Grid) */}
         <section id="proyectos" className="py-8 px-6">
@@ -271,32 +249,6 @@ export default function App() {
           </div>
         </section>
 
-        {/* Video del Hall con Glassmorphism */}
-        <section className="relative w-full h-[60vh] flex items-center justify-center my-12 px-6">
-            <video
-                ref={hallVideoRef}
-                autoPlay
-                muted
-                loop
-                playsInline
-                className="absolute top-0 left-0 w-full h-full object-cover -z-10" // Fondo
-            >
-                <source src="/assets/video_hall.mp4" type="video/mp4" />
-                Your browser does not support the video tag.
-            </video>
-            <div className="relative z-10 bg-white/10 backdrop-blur-md border border-white/20 rounded-lg p-8 md:p-12 text-center max-w-2xl mx-auto shadow-lg">
-                <h2 className="text-3xl md:text-4xl font-bold text-bone mb-4 leading-tight">
-                    El <span className="italic font-light text-accent">Arte</span> de la Reforma
-                </h2>
-                <p className="text-bone/80 text-lg mb-6">
-                    Descubre cómo transformamos cada espacio en una obra única, combinando funcionalidad y belleza en cada detalle.
-                </p>
-                <a href="#contacto" className="inline-flex items-center gap-3 text-bone border border-bone px-8 py-3 hover:bg-accent hover:border-accent transition-all duration-500 uppercase tracking-widest text-xs font-bold">
-                    Contáctanos
-                    <ArrowRight className="w-4 h-4" />
-                </a>
-            </div>
-        </section>
 
         {/* Proceso de Trabajo */}
         <section id="proceso" className="py-12 px-6 overflow-hidden">
