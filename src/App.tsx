@@ -24,9 +24,19 @@ import { useRef, useState, useEffect } from "react";
 
 export default function App() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll();
+  const { scrollYProgress: globalScrollYProgress } = useScroll();
 
-  const videoRef = useRef<HTMLVideoElement>(null); // Ref for scroll video
+  const heroVideoRef = useRef<HTMLVideoElement>(null); // Ref for the hero video (autoplay background)
+  const scrollVideoRef = useRef<HTMLVideoElement>(null); // Ref for the scroll-controlled video
+
+  const { scrollYProgress: localScrollYProgress } = useScroll({
+    target: scrollVideoRef,
+    offset: ["start end", "end start"]
+  });
+
+  const videoOpacity = useTransform(globalScrollYProgress, [0, 0.3], [1, 0.5]);
+  const heroOpacity = useTransform(globalScrollYProgress, [0, 0.2], [1, 0]);
+  const heroScale = useTransform(globalScrollYProgress, [0, 0.2], [1, 0.95]);
 
   const [testimonialIndex, setTestimonialIndex] = useState(0);
   const testimonials = [
@@ -41,38 +51,37 @@ export default function App() {
   const prevTestimonial = () => setTestimonialIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
   
   // Video scroll effects
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
-  const heroScale = useTransform(scrollYProgress, [0, 0.2], [1, 0.95]);
+  const videoOpacity = useTransform(globalScrollYProgress, [0, 0.3], [1, 0.5]);
+  const heroOpacity = useTransform(globalScrollYProgress, [0, 0.2], [1, 0]);
+  const heroScale = useTransform(globalScrollYProgress, [0, 0.2], [1, 0.95]);
 
-  // Effect for scroll-controlled video
+  // Effect for scroll-controlled video playback
+  // Effect for the new scroll-controlled video (scrollVideoRef)
   useEffect(() => {
-    const video = videoRef.current;
+    const video = scrollVideoRef.current;
     if (!video) return;
 
-    const handleScroll = () => {
-      const scrollY = window.scrollY;
-      const scrollMax = document.documentElement.scrollHeight - window.innerHeight;
-      const scrollFraction = scrollY / scrollMax;
-
-      // Adjust this multiplier based on video length and desired scroll speed
-      video.currentTime = video.duration * scrollFraction;
+    const unsubscribe = localScrollYProgress.onChange((latest) => {
+      // Only update currentTime if video is in view and has a duration
+      if (video && video.duration) {
+        video.currentTime = video.duration * latest;
+      }
+    });
+    return () => {
+      unsubscribe(); // Clean up the observer when component unmounts
     };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  return (
-    <div ref={containerRef} className="relative w-full">
+  }, [localScrollYProgress]);
       {/* Background Video */}
       <motion.div
-        className="video-container fixed top-0 left-0 w-full h-screen"
+        style={{ opacity: videoOpacity }}
+        className="video-container"
       >
         <video
-          ref={videoRef}
+          ref={heroVideoRef}
+          autoPlay
           muted
+          loop
           playsInline
-          preload="auto"
           className="w-full h-full object-cover"
         >
           <source src="/assets/Smooth_and_striking_202603211905.mp4" type="video/mp4" />
@@ -172,6 +181,46 @@ export default function App() {
         </section>
 
 
+        {/* Video con reproducción controlada por scroll */}
+        <section className="relative w-full h-[70vh] flex items-center justify-center my-12 px-6 overflow-hidden">
+          <video
+            ref={scrollVideoRef}
+            muted
+            playsInline
+            preload="auto"
+            className="absolute top-0 left-0 w-full h-full object-cover"
+          >
+            <source src="/assets/Smooth_and_striking_202603211905.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+          {/* Overlay for text readability */}
+          <div className="absolute inset-0 bg-black/30 z-10 flex items-center justify-center">
+            <h2 className="text-bone text-4xl md:text-6xl font-black uppercase tracking-tighter text-center max-w-4xl leading-tight">
+              Diseño y Ejecución que <span className="italic font-light text-accent">Superan Expectativas</span>
+            </h2>
+          </div>
+        </section>
+
+        {/* Video con reproducción controlada por scroll */}
+        <section className="relative w-full h-[70vh] flex items-center justify-center my-12 px-6 overflow-hidden">
+          <video
+            ref={scrollVideoRef}
+            muted
+            playsInline
+            preload="auto"
+            className="absolute top-0 left-0 w-full h-full object-cover"
+          >
+            <source src="/assets/Smooth_and_striking_202603211905.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+          {/* Overlay for text readability */}
+          <div className="absolute inset-0 bg-black/30 z-10 flex items-center justify-center">
+            <h2 className="text-bone text-4xl md:text-6xl font-black uppercase tracking-tighter text-center max-w-4xl leading-tight">
+              Diseño y Ejecución que <span className="italic font-light text-accent">Superan Expectativas</span>
+            </h2>
+          </div>
+        </section>
+
         {/* Galería Proyectos (Bento Grid) */}
         <section id="proyectos" className="py-8 px-6">
           <div className="max-w-7xl mx-auto">
@@ -179,12 +228,12 @@ export default function App() {
               <span className="text-accent uppercase tracking-widest text-xs font-bold mb-3 block">Portafolio</span>
               <h2 className="text-2xl md:text-3xl">Proyectos que <span className="italic">Inspiran</span></h2>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-12 gap-4 auto-rows-[180px]">
               <div className="md:col-span-8 md:row-span-2 relative overflow-hidden group">
-                <img 
-                  src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&q=80&w=1200" 
-                  alt="Luxury Living Room" 
+                <img
+                  src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&q=80&w=1200"
+                  alt="Luxury Living Room"
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   referrerPolicy="no-referrer"
                 />
@@ -193,11 +242,11 @@ export default function App() {
                   <p className="text-bone/80 text-sm">Reforma Integral • 2024</p>
                 </div>
               </div>
-              
+
               <div className="md:col-span-4 md:row-span-1 relative overflow-hidden group">
-                <img 
-                  src="https://images.unsplash.com/photo-1556912173-3bb406ef7e77?auto=format&fit=crop&q=80&w=800" 
-                  alt="Modern Kitchen" 
+                <img
+                  src="https://images.unsplash.com/photo-1556912173-3bb406ef7e77?auto=format&fit=crop&q=80&w=800"
+                  alt="Modern Kitchen"
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   referrerPolicy="no-referrer"
                 />
@@ -206,11 +255,11 @@ export default function App() {
                   <p className="text-bone/80 text-xs">Diseño de Autor</p>
                 </div>
               </div>
-              
+
               <div className="md:col-span-4 md:row-span-2 relative overflow-hidden group">
-                <img 
-                  src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=800" 
-                  alt="Luxury Bathroom" 
+                <img
+                  src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=800"
+                  alt="Luxury Bathroom"
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   referrerPolicy="no-referrer"
                 />
@@ -219,11 +268,11 @@ export default function App() {
                   <p className="text-bone/80 text-xs">Mármol Carrara</p>
                 </div>
               </div>
-              
+
               <div className="md:col-span-4 md:row-span-1 relative overflow-hidden group">
-                <img 
-                  src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=800" 
-                  alt="Suite Principal" 
+                <img
+                  src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=800"
+                  alt="Suite Principal"
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   referrerPolicy="no-referrer"
                 />
@@ -232,11 +281,11 @@ export default function App() {
                   <p className="text-bone/80 text-xs">Iluminación Indirecta</p>
                 </div>
               </div>
-              
+
               <div className="md:col-span-4 md:row-span-1 relative overflow-hidden group">
-                <img 
-                  src="https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&q=80&w=800" 
-                  alt="Dining Room" 
+                <img
+                  src="https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&q=80&w=800"
+                  alt="Dining Room"
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   referrerPolicy="no-referrer"
                 />
