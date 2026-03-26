@@ -1,17 +1,12 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import { motion, useScroll, useTransform, AnimatePresence } from "motion/react";
-import { 
-  ShieldCheck, 
-  Users, 
-  BadgeEuro, 
-  Sparkles, 
-  ArrowRight, 
-  Instagram, 
-  Facebook, 
+import {
+  ShieldCheck,
+  Users,
+  BadgeEuro,
+  Sparkles,
+  ArrowRight,
+  Instagram,
+  Facebook,
   Linkedin,
   MessageCircle,
   MapPin,
@@ -49,28 +44,24 @@ export default function App() {
 
   const nextTestimonial = () => setTestimonialIndex((prev) => (prev + 1) % testimonials.length);
   const prevTestimonial = () => setTestimonialIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
-  
-  // Video scroll effects
-  const videoOpacity = useTransform(globalScrollYProgress, [0, 0.3], [1, 0.5]);
-  const heroOpacity = useTransform(globalScrollYProgress, [0, 0.2], [1, 0]);
-  const heroScale = useTransform(globalScrollYProgress, [0, 0.2], [1, 0.95]);
 
-  // Effect for scroll-controlled video playback
   // Effect for the new scroll-controlled video (scrollVideoRef)
   useEffect(() => {
     const video = scrollVideoRef.current;
     if (!video) return;
 
     const unsubscribe = localScrollYProgress.onChange((latest) => {
-      // Only update currentTime if video is in view and has a duration
       if (video && video.duration) {
         video.currentTime = video.duration * latest;
       }
     });
     return () => {
-      unsubscribe(); // Clean up the observer when component unmounts
+      unsubscribe();
     };
   }, [localScrollYProgress]);
+
+  return (
+    <div ref={containerRef} className="relative w-full">
       {/* Background Video */}
       <motion.div
         style={{ opacity: videoOpacity }}
@@ -95,7 +86,7 @@ export default function App() {
           <div className="flex items-center gap-3">
             <span className="text-charcoal font-black text-2xl tracking-tighter uppercase">Reformas Mario</span>
           </div>
-          
+
           <nav className="hidden md:flex items-center gap-8 text-charcoal/80 text-xs uppercase tracking-widest">
             <a href="#proyectos" className="hover:text-accent transition-colors">Proyectos</a>
             <a href="#proceso" className="hover:text-accent transition-colors">Proceso</a>
@@ -112,12 +103,12 @@ export default function App() {
       <section className="relative h-screen flex items-center px-6 md:px-24">
         {/* Subtle gradient for text readability */}
         <div className="absolute inset-0 hero-gradient pointer-events-none" />
-        
-        <motion.div 
+
+        <motion.div
           style={{ opacity: heroOpacity, scale: heroScale }}
           className="relative z-10 max-w-3xl w-full text-left"
         >
-          <motion.span 
+          <motion.span
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}
@@ -125,7 +116,7 @@ export default function App() {
           >
             Arquitectura & Diseño de Interiores
           </motion.span>
-          <motion.h1 
+          <motion.h1
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.4 }}
@@ -134,7 +125,7 @@ export default function App() {
             Creamos el <br />
             <span className="italic font-light text-accent">Escenario</span> de su Vida
           </motion.h1>
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.6 }}
@@ -157,7 +148,7 @@ export default function App() {
 
       {/* Main Content (Scrolls over video) */}
       <main className="relative z-10 bg-bone">
-        
+
         {/* Trust Signals */}
         <section className="py-24 px-6 border-b border-charcoal/5">
           <div className="max-w-7xl mx-auto">
@@ -177,27 +168,6 @@ export default function App() {
                 </div>
               ))}
             </div>
-          </div>
-        </section>
-
-
-        {/* Video con reproducción controlada por scroll */}
-        <section className="relative w-full h-[70vh] flex items-center justify-center my-12 px-6 overflow-hidden">
-          <video
-            ref={scrollVideoRef}
-            muted
-            playsInline
-            preload="auto"
-            className="absolute top-0 left-0 w-full h-full object-cover"
-          >
-            <source src="/assets/Smooth_and_striking_202603211905.mp4" type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-          {/* Overlay for text readability */}
-          <div className="absolute inset-0 bg-black/30 z-10 flex items-center justify-center">
-            <h2 className="text-bone text-4xl md:text-6xl font-black uppercase tracking-tighter text-center max-w-4xl leading-tight">
-              Diseño y Ejecución que <span className="italic font-light text-accent">Superan Expectativas</span>
-            </h2>
           </div>
         </section>
 
@@ -307,11 +277,11 @@ export default function App() {
               <h2 className="text-3xl md:text-4xl mb-4">El Camino a la <span className="italic">Perfección</span></h2>
               <p className="max-w-2xl text-charcoal/60 text-sm">Un proceso riguroso y transparente para asegurar que cada detalle cumpla con sus expectativas más exigentes.</p>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-4 gap-12 relative">
               {/* Line background */}
               <div className="hidden md:block absolute top-12 left-0 w-full h-[1px] bg-charcoal/10 -z-10" />
-              
+
               {[
                 { step: "01", title: "Consultoría", desc: "Entendemos su visión y necesidades en una primera reunión de diseño." },
                 { step: "02", title: "Proyecto 3D", desc: "Visualice su futuro hogar con renders hiperrealistas antes de empezar." },
@@ -336,26 +306,26 @@ export default function App() {
             <div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl">Experiencias <span className="italic">Inolvidables</span></h2>
             </div>
-            
+
             <div className="relative px-4 overflow-visible">
               <div className="flex items-center justify-center h-[450px] relative">
                 {[-1, 0, 1].map((offset) => {
                   const index = (testimonialIndex + offset + testimonials.length) % testimonials.length;
                   const isCenter = offset === 0;
-                  
+
                   return (
                     <motion.div
                       key={index}
                       initial={false}
-                      animate={{ 
+                      animate={{
                         scale: isCenter ? 1 : 0.75,
                         x: offset * 320,
                         opacity: isCenter ? 1 : 0.3,
                         zIndex: isCenter ? 20 : 10,
                         filter: isCenter ? "brightness(1)" : "brightness(0.5)",
                       }}
-                      transition={{ 
-                        duration: 0.8, 
+                      transition={{
+                        duration: 0.8,
                         ease: [0.16, 1, 0.3, 1]
                       }}
                       className="absolute p-8 md:p-10 bg-white border border-charcoal/5 shadow-2xl w-full max-w-sm text-center flex flex-col justify-between h-[380px]"
@@ -363,9 +333,9 @@ export default function App() {
                       <div>
                         <div className="flex justify-center gap-1 mb-6">
                           {[...Array(5)].map((_, i) => (
-                            <Sparkles 
-                              key={i} 
-                              className={`w-5 h-5 ${i < testimonials[index].rating ? "text-yellow-400 fill-yellow-400" : "text-charcoal/10 fill-charcoal/10"}`} 
+                            <Sparkles
+                              key={i}
+                              className={`w-5 h-5 ${i < testimonials[index].rating ? "text-yellow-400 fill-yellow-400" : "text-charcoal/10 fill-charcoal/10"}`}
                             />
                           ))}
                         </div>
@@ -383,13 +353,13 @@ export default function App() {
               </div>
 
               {/* Controls */}
-              <button 
+              <button
                 onClick={prevTestimonial}
                 className="absolute left-0 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full border border-charcoal/10 flex items-center justify-center hover:bg-charcoal hover:text-bone transition-colors z-30"
               >
                 <ChevronLeft className="w-6 h-6" />
               </button>
-              <button 
+              <button
                 onClick={nextTestimonial}
                 className="absolute right-0 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full border border-charcoal/10 flex items-center justify-center hover:bg-charcoal hover:text-bone transition-colors z-30"
               >
@@ -467,7 +437,7 @@ export default function App() {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="mt-12 pt-12 border-t border-accent/20">
                     <h4 className="text-sm font-bold uppercase tracking-widest mb-4">Horario de Atención</h4>
                     <p className="text-charcoal/70 text-sm">Lunes - Viernes: 09:00 - 19:00</p>
@@ -487,14 +457,14 @@ export default function App() {
             <div className="flex items-center gap-2">
               <span className="text-accent font-black text-2xl tracking-tighter uppercase">Reformas Mario</span>
             </div>
-            
+
             <div className="flex gap-6">
               <a href="#" className="hover:text-accent transition-colors"><Instagram className="w-5 h-5" /></a>
               <a href="#" className="hover:text-accent transition-colors"><Facebook className="w-5 h-5" /></a>
               <a href="#" className="hover:text-accent transition-colors"><Linkedin className="w-5 h-5" /></a>
             </div>
           </div>
-          
+
           <div className="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-bone/10 text-[9px] uppercase tracking-[0.2em] text-bone/40 gap-4">
             <p>© 2026 Reformas Mario. Todos los derechos reservados.</p>
             <div className="flex gap-6">
@@ -507,9 +477,9 @@ export default function App() {
       </footer>
 
       {/* Floating WhatsApp Button */}
-      <a 
-        href="https://wa.me/34912345678" 
-        target="_blank" 
+      <a
+        href="https://wa.me/34912345678"
+        target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-8 right-8 z-50 bg-[#25D366] text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform flex items-center justify-center"
       >
