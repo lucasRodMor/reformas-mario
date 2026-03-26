@@ -64,7 +64,6 @@ export default function App() {
     <div ref={containerRef} className="relative w-full">
       {/* Background Video */}
       <motion.div
-        style={{ opacity: videoOpacity }}
         className="video-container"
       >
         <video
@@ -172,7 +171,10 @@ export default function App() {
         </section>
 
         {/* Video con reproducción controlada por scroll */}
-        <section className="relative w-full h-[70vh] flex items-center justify-center my-12 px-6 overflow-hidden">
+        <motion.section
+          style={{ opacity: videoOpacity }}
+          className="relative w-full h-[70vh] flex items-center justify-center my-12 px-6 overflow-hidden"
+        >
           <video
             ref={scrollVideoRef}
             muted
@@ -189,7 +191,7 @@ export default function App() {
               Diseño y Ejecución que <span className="italic font-light text-accent">Superan Expectativas</span>
             </h2>
           </div>
-        </section>
+        </motion.section>
 
         {/* Galería Proyectos (Bento Grid) */}
         <section id="proyectos" className="py-8 px-6">
